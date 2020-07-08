@@ -7,15 +7,21 @@ Vagrant.configure("2") do |config|
   config.vm.define vm_name = "zimmer" do |config|
     config.vm.hostname = "zimmer"
     config.vm.network :private_network, ip: "192.168.10.101"
-    config.vm.network "forwarded_port", guest: 80, host: 8080
-    config.vm.network "forwarded_port", guest: 14000, host: 14000
+    config.vm.network "forwarded_port", guest: 8000, host: 8000
+    config.vm.provision "docker"
+    config.vm.provision "file", source: "./zimmer/kong", destination: "kong"
+    config.vm.provision "shell", inline: <<-SHELL
+      curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+      chmod +x /usr/local/bin/docker-compose
+      sudo curl -L https://raw.githubusercontent.com/docker/compose/1.26.2/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
+    SHELL
   end
 
   config.vm.define vm_name = "amadeus" do |config|
       config.vm.hostname = "amadeus"
       config.vm.network :private_network, ip: "192.168.20.101"
-      config.vm.network "forwarded_port", guest: 9000, host: 9002
-      config.vm.network "forwarded_port", guest: 14000, host: 14002
+      config.vm.network "forwarded_port", guest: 50070, host: 50070
+      config.vm.network "forwarded_port", guest: 50075, host: 50075
       config.vm.provider :virtualbox do |vb|
           vb.memory = 2048
           vb.cpus = 1
@@ -44,8 +50,8 @@ Vagrant.configure("2") do |config|
   config.vm.define vm_name = "bach" do |config|
     config.vm.hostname = "bach"
     config.vm.network :private_network, ip: "192.168.30.101"
-    config.vm.network "forwarded_port", guest: 9000, host: 9003
-    config.vm.network "forwarded_port", guest: 14000, host: 14003
+    config.vm.network "forwarded_port", guest: 50071, host: 50071
+    config.vm.network "forwarded_port", guest: 50076, host: 50076
     config.vm.provider :virtualbox do |vb|
         vb.memory = 2048
         vb.cpus = 1

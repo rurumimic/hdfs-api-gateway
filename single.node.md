@@ -12,9 +12,7 @@ export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk/jre
 
 ### core-site.xml
 
-- Host
-  - amadeus: `192.168.20.101`
-  - bach: `192.168.30.101`
+- Host: `amadeus`, `bach`
 - Port: `9000`
 
 ```bash
@@ -25,7 +23,7 @@ vi $HADOOP_HOME/etc/hadoop/core-site.xml
 <configuration>
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://192.168.xxx.xxx:9000</value>
+        <value>hdfs://amadeus:9000</value>
     </property>
     <property>
         <name>hadoop.proxyuser.vagrant.hosts</name>
@@ -90,7 +88,8 @@ vi $HADOOP_HOME/etc/hadoop/yarn-site.xml
 ### Format File System
 
 ```bash
-hdfs namenode -format
+hdfs namenode -format;
+hdfs datanode -format;
 ```
 
 ### Start Daemons
@@ -98,13 +97,11 @@ hdfs namenode -format
 ```bash
 start-dfs.sh;
 start-yarn.sh;
-httpfs.sh start;
 ```
 
 ### Stop Daemons
 
 ```bash
-httpfs.sh stop;
 stop-yarn.sh;
 stop-dfs.sh;
 ```
@@ -122,6 +119,7 @@ hdfs dfs -mkdir -p /user/$USER
 ```bash
 hdfs dfs -mkdir -p /user/$USER/input
 hdfs dfs -put $HADOOP_HOME/etc/hadoop/*.xml input
+hdfs dfs -put $HADOOP_HOME/etc/hadoop/core-site.xml input
 ```
 
 View the input files
@@ -151,12 +149,14 @@ hdfs dfs -cat output/*
 1       dfs.replication
 ```
 
-#### HttpFS
+#### webhdfs
 
 ```bash
-curl -sS 'http://amadeus:14000/webhdfs/v1?op=gethomedirectory&user.name=vagrant'
-curl -sS 'http://bach:14000/webhdfs/v1?op=gethomedirectory&user.name=vagrant'
+curl -sSL 'http://amadeus:50070/webhdfs/v1/user/vagrant/input/core-site.xml?op=OPEN&user.name=vagrant'
+curl -sSL 'http://amadeus:50070/webhdfs/v1/user/vagrant/input?op=LISTSTATUS&user.name=vagrant'
+```
 
-curl -sS 'http://amadeus:14000/webhdfs/v1/user/vagrant/input/core-site.xml?op=OPEN&user.name=vagrant'
-curl -sS 'http://192.168.20.101:14000/webhdfs/v1/user/vagrant/input/core-site.xml?op=OPEN&user.name=vagrant'
+```bash
+curl -sSL 'http://bach:50070/webhdfs/v1/user/vagrant/input/core-site.xml?op=OPEN&user.name=vagrant'
+curl -sSL 'http://bach:50070/webhdfs/v1/user/vagrant/input?op=LISTSTATUS&user.name=vagrant'
 ```

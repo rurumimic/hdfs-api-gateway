@@ -52,6 +52,20 @@ HDFS version:
 hdfs version
 ```
 
+## /etc/hosts
+
+```bash
+sudo vi /etc/hosts
+```
+
+```bash
+127.0.0.1 localhost
+
+192.168.10.101 zimmer
+192.168.20.101 amadeus
+192.168.30.101 bach
+```
+
 ## HDFS setup
 
 [Single Node](single.node.md)
@@ -59,3 +73,10 @@ hdfs version
 ## API Gateway
 
 [API Gateway](api.md)
+
+## Local Test
+
+```bash
+curl -v 'http://localhost:8000/amadeus/webhdfs/v1/user/vagrant/input/core-site.xml?op=OPEN&user.name=vagrant'
+curl -v 'http://localhost:8000/bach/webhdfs/v1/user/vagrant/input/core-site.xml?op=OPEN&user.name=vagrant'
+```
